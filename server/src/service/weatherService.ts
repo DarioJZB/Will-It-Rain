@@ -1,31 +1,94 @@
+import dayjs  from 'dayjs';
 import dotenv from 'dotenv';
 dotenv.config();
+import fetch from 'node-fetch';
 
-// TODO: Define an interface for the Coordinates object
+// interface for the Coordinates object
+interface IWeather {
+  city: string;
+  date: string;
+  icon: string;
+  iconDescription: string;
+  tempF: number;
+  windSpeed: number; //response.wind.speed,
+  humidity: number;
+}
+  
+//class for the Weather object
+class Weather implements IWeather {
+  city: string;
+  date: string;
+  icon: string;
+  iconDescription: string;
+  tempF: number;
+  windSpeed: number;
+  humidity: number;
 
-// TODO: Define a class for the Weather object
 
-// TODO: Complete the WeatherService class
-class WeatherService {
-  // TODO: Define the baseURL, API key, and city name properties
-  // TODO: Create fetchLocationData method
-  // private async fetchLocationData(query: string) {}
-  // TODO: Create destructureLocationData method
-  // private destructureLocationData(locationData: Coordinates): Coordinates {}
-  // TODO: Create buildGeocodeQuery method
-  // private buildGeocodeQuery(): string {}
-  // TODO: Create buildWeatherQuery method
-  // private buildWeatherQuery(coordinates: Coordinates): string {}
-  // TODO: Create fetchAndDestructureLocationData method
-  // private async fetchAndDestructureLocationData() {}
-  // TODO: Create fetchWeatherData method
-  // private async fetchWeatherData(coordinates: Coordinates) {}
-  // TODO: Build parseCurrentWeather method
-  // private parseCurrentWeather(response: any) {}
-  // TODO: Complete buildForecastArray method
-  // private buildForecastArray(currentWeather: Weather, weatherData: any[]) {}
-  // TODO: Complete getWeatherForCity method
-  // async getWeatherForCity(city: string) {}
+  constructor(
+    city: string,
+    date: string,
+    icon: string,
+    iconDescription: string,
+    tempF: number,
+    windSpeed: number,
+    humudity: number) {
+      this.city = city;
+      this.date = date;
+      this.icon = icon;
+      this.iconDescription = iconDescription;
+      this.tempF = tempF;
+      this.windSpeed = windSpeed;
+      this.humidity = humudity;      
+    }
+}
+
+//WeatherService class
+class WeatherService{
+
+  async getWeatherForCity(city: string) {
+    // get the weather from the API
+    const fiveDayUrl = `${process.env.API_BASE_URL}2.5/forecast?q=${city}&appid=${process.env.API_KEY}&units=imperial`;
+    const fiveDayTemp = await fetch(fiveDayUrl);
+    const cityData: any = await fiveDayTemp.json();
+    const fiveDay = [cityData.list[4], cityData.list[12], cityData.list[20], cityData.list[28], cityData.list[36]];
+    const coord = cityData.city.coord;
+    const currentWeatherUrl = `${process.env.API_BASE_URL}2.5/weather?lat=${coord.lat}&lon=${coord.lon}&appid=${process.env.API_KEY}&units=imperial`;
+    const currentWeatherDataTemp = await fetch(currentWeatherUrl);
+    const currentWeatherData : any = await currentWeatherDataTemp.json();
+    const weatherArr = [];
+    const date = dayjs(currentWeatherData.dt * 1000).format(`MM/DD/YYYY`);
+
+    const currentWeather = new Weather (
+      currentWeatherData.name,
+      date,
+      currentWeatherData.weather[0].icon,
+      currentWeatherData.weather[0].description,
+      currentWeatherData.main.temp,
+      currentWeatherData.wind.speed,
+      currentWeatherData.main.humidity,
+    );
+
+    weatherArr.push(currentWeather);
+    
+    fiveDay.forEach(day => {
+      const tempDate = dayjs(day.dt * 1000).format(`MM/DD/YYYY`);
+      let tempData = new Weather (
+        currentWeatherData.name,
+        tempDate,
+        day.weather[0].icon,
+        day.weather[0].description,
+        day.main.temp,
+        day.wind.speed,
+        day.main.humidity,
+      );
+
+      weatherArr.push(tempData);    
+
+    });
+
+    return weatherArr;
+  }
 }
 
 export default new WeatherService();
