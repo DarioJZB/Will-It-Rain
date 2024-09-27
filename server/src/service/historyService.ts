@@ -1,18 +1,44 @@
-// TODO: Define a City class with name and id properties
+import fs from 'fs';
 
+class City {
+  name: string;
 
-// TODO: Complete the HistoryService class
+  constructor(city: string){
+    this.name = city;
+  }
+}
+
 class HistoryService {
-  // TODO: Define a read method that reads from the searchHistory.json file
-  //private async read() {}
-  // TODO: Define a write method that writes the updated cities array to the searchHistory.json file
-  // private async write(cities: City[]) {}
-  // TODO: Define a getCities method that reads the cities from the searchHistory.json file and returns them as an array of City objects
-  // async getCities() {}
-  // TODO Define an addCity method that adds a city to the searchHistory.json file
-  // async addCity(city: string) {}
-  // * BONUS TODO: Define a removeCity method that removes a city from the searchHistory.json file
-  // async removeCity(id: string) {}
+  //method that reads from the searchHistory.json file
+  private async read() {
+      const data = await fs.promises.readFile('history.json', 'utf8'); 
+      return JSON.parse(data);
+    }
+
+  duplicateCheck (arr: City[], cityObj: City) {
+    return arr.some(city => city.name === cityObj.name);
+  }  
+
+  async getCities() {
+    const history = await this.read();
+    return history;
+   }
+  
+  async addCity(city: string) {
+    let historyArr = await this.read();
+    const tempCity = new City(city);
+    if(!this.duplicateCheck(historyArr, tempCity)) {
+      historyArr.push(tempCity);
+      const formattedHistoryArr = JSON.stringify(historyArr);
+      fs.writeFile('history.json', formattedHistoryArr, (error) =>{
+        if(error) {
+          console.log(error);
+        } else {
+          console.log(`successful`);
+        }
+      })
+    }
+  }
 }
 
 export default new HistoryService();
