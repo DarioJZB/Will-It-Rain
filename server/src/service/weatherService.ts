@@ -1,7 +1,7 @@
 import dayjs  from 'dayjs';
 import dotenv from 'dotenv';
 dotenv.config();
-import fetch from 'node-fetch';
+
 
 // interface for the Coordinates object
 interface IWeather {
@@ -23,7 +23,6 @@ class Weather implements IWeather {
   tempF: number;
   windSpeed: number;
   humidity: number;
-
 
   constructor(
     city: string,

@@ -4,10 +4,13 @@ dotenv.config();
 
 // Import the routes
 import routes from './routes/index.js';
+//import path from 'node:path';
 
 const app = express();
 
 const PORT = process.env.PORT || 3001;
+
+//app.use(express.static(path.join(__dirname, '../../client/dist')))
 
 app.use(express.static(`../../client/dist`));
 
