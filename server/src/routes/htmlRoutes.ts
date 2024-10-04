@@ -6,7 +6,8 @@ const __dirname = path.dirname(__filename);
 const router = Router();
 
 router.get('/',(_req: any, res: any)=>{
-    res.sendFile(path.join(__dirname, '../../../../client/dist/index.html'))
+    console.log(__dirname);
+    res.sendFile(path.join(__dirname, '../../../client/dist/index.html'))
 });
 
 export default router;

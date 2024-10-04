@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3001;
 
 //app.use(express.static(path.join(__dirname, '../../client/dist')))
 
-app.use(express.static(`../../client/dist`));
+app.use(express.static(`../../client/public`));
 
 app.use(express.json());
 
