@@ -13,7 +13,7 @@ This app searches the current weather in a city and also displays the next 5 day
 - [Questions](#questions)
 
 ## Installation
-No need to install, you can access the app using this link.
+No need to install, you can access the app using this [link](https://will-it-rain.onrender.com).
 
 ## Usage
 You can use the link above.  If you want to extend the usability of this app, you can clone this repository.
